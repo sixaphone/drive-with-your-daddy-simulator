@@ -12,6 +12,7 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: development
+      DATABASE_URL: mysql://traffic:traffic@mysql:3306/traffic
     volumes:
       - ./backend:/app
     command: pnpm run dev
@@ -21,6 +22,7 @@ services:
   mysql:
     image: mysql:latest
     container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: admin
