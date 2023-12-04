@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: traffic-simulation-backend
+    container_name: traffic-simulation-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./backend:/app
+    command: pnpm run dev
+    networks:
+      - traffic-simulation
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: traffic
+      MYSQL_USER: traffic
+      MYSQL_PASSWORD: traffic
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks:
+      - traffic-simulation
+
+networks:
+  traffic-simulation:
+    driver: bridge
