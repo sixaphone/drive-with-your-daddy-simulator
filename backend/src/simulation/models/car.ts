@@ -43,7 +43,7 @@ export class Car {
         car.start = start;
         car.end = end;
         car._path = [];
-        car.turnsInTraffic = 0
+        car.turnsInTraffic = 0;
         car.simulationId = 'sim';
 
         return car;
@@ -92,7 +92,7 @@ export class Car {
 
     addPath(path: Tile[]): void {
         this.route = path.map((tile) => ({ x: tile.x, y: tile.y }));
-        this.numberOfSteps = this.route.length;
+        this.numberOfSteps = this.route.length - 1; // we take off 1 because we dont want to count starting tile
         this.previous = undefined;
 
         const current: Tile | undefined = path.shift();

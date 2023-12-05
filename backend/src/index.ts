@@ -8,6 +8,11 @@ import { Car } from "@simulation/models/car";
 import { Simulation } from "@simulation/models/simulation";
 import env from "@env";
 import type { CarInput, RunSimulationInput } from "@types";
+import { getSimulations } from "./reports/get-simulations";
+import { getSimulation } from "./reports/get-simulation";
+import { getFastestSimulationsOrderedByTurnsInTraffic } from "./reports/get-simulation-ordered-by-fastest";
+import { getSlowestSimulationsOrderedByTurnsInTraffic } from "./reports/get-simulation-ordered-by-slowest";
+import { getLeastWaitSimulationsOrderedByTurnsInTraffic } from "./reports/get-simulation-ordered-by-least-wait";
 
 const app = express();
 
@@ -45,7 +50,13 @@ app.post('/simulate', async (req, res) => {
     }
 
     return;
-})
+});
+
+app.get('/simulations', getSimulations);
+app.get('/simulations/fastest', getFastestSimulationsOrderedByTurnsInTraffic);
+app.get('/simulations/slowest', getSlowestSimulationsOrderedByTurnsInTraffic);
+app.get('/simulations/smallest-difference', getLeastWaitSimulationsOrderedByTurnsInTraffic);
+app.get('/simulations/:id', getSimulation);
 
 const port = env.PORT;
 

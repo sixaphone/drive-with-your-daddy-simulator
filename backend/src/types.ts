@@ -35,6 +35,12 @@ export interface CarInput {
     end: Coordinates;
     isEmergency?: boolean;
 }
+
 export interface RunSimulationInput {
     cars: CarInput[];
+}
+
+export interface FilterSimulationsInput {
+    from: string;
+    to: string;
 }
