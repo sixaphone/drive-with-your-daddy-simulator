@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node tsconfig-paths/register dist/index.js",
     "dev": "nodemon",
     "build": "tsc",
     "demo": "clear && npx ts-node -r tsconfig-paths/register src/simulation/index.ts"
