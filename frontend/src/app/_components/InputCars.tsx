@@ -1,20 +1,24 @@
 'use client'
 import { useMemo, useState } from 'react';
 import InputCar from './InputCar';
-import { Car } from '../_types';
+import { Car, Steps } from '../_types';
 
 interface InputCarsProps {
   setSteps: (steps: any) => void;
+  steps: Steps;
 }
 
-export default function InputCars({ setSteps }: InputCarsProps) {
+export default function InputCars({ steps, setSteps }: InputCarsProps) {
   const [cars, setCars] = useState<Car[]>([]);
   const [noOfCars, setNoOfCars] = useState(0);
   const [error, setError] = useState('');
+  const canEdit = useMemo(() => {
+    return steps.length === 0;
+  }, [steps]);
   const enabled = useMemo(() => {
-    return noOfCars 
-      && cars.length 
-      && cars.every(car => car.start && car.end && !isNaN(car.start.x!) && !isNaN(car.start.y!) && !isNaN(car.end.x!) && !isNaN(car.end.y!));
+    return noOfCars
+      && cars.length
+      && cars.every(car => canEdit && car.start && car.end && !isNaN(car.start.x!) && !isNaN(car.start.y!) && !isNaN(car.end.x!) && !isNaN(car.end.y!));
   }, [cars, noOfCars]);
 
   const onEnterCars = (e: any) => {
@@ -58,7 +62,7 @@ export default function InputCars({ setSteps }: InputCarsProps) {
       <div className='w-full flex justify-center gap-4'>
         <div className="flex justify-end gap-4 items-center">
           <label htmlFor="noOfCars">Enter number of cars: </label>
-          <input onChange={onEnterCars} value={noOfCars} id="noOfCars" className='text-center border w-10 h-7 rounded border-gray-400'></input>
+          <input disabled={!canEdit} onChange={onEnterCars} value={noOfCars} id="noOfCars" className='text-center border w-10 h-7 rounded border-gray-400'></input>
         </div>
         <div className='flex justify-start'>
           <button

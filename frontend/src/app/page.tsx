@@ -11,7 +11,7 @@ export default function Home() {
     <div className="flex flex-col gap-4">
       <Simulation setSteps={setSteps} steps={steps} />
 
-      <InputCars setSteps={setSteps}/>
+      <InputCars setSteps={setSteps} steps={steps} />
     </div>
   )
 }
