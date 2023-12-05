@@ -30,3 +30,11 @@ export interface Neighbours<T> {
     [Direction.DOWN]?: T;
 }
 
+export interface CarInput {
+    start: Coordinates;
+    end: Coordinates;
+    isEmergency?: boolean;
+}
+export interface RunSimulationInput {
+    cars: CarInput[];
+}

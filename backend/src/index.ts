@@ -1,35 +1,50 @@
 import "reflect-metadata"
 import express from 'express';
 import connection from '@database/connection';
+import cors from 'cors';
 import { Road } from "@simulation/models/road";
 import { DEFAULT_LAYOUT } from "@constants";
 import { Car } from "@simulation/models/car";
 import { Simulation } from "@simulation/models/simulation";
 import env from "@env";
+import type { CarInput, RunSimulationInput } from "@types";
 
 const app = express();
 
-app.get('/', async (_, res) => {
-    const road = new Road(DEFAULT_LAYOUT, DEFAULT_LAYOUT.length, DEFAULT_LAYOUT[0].length);
-    // two cars at intersection in opposing directions
-    const cars = [
-        Car.create({ x: 4, y: 2 }, { x: 8, y: 9 }),
-        Car.create({ x: 4, y: 5 }, { x: 0, y: 0 }),
+app.use(cors());
 
-    ];
+app.use(express.json());
+
+app.post('/simulate', async (req, res) => {
+    const body = req.body as RunSimulationInput;
+    const road = new Road(DEFAULT_LAYOUT, DEFAULT_LAYOUT.length, DEFAULT_LAYOUT[0].length);
+
+    const cars = body.cars.map(
+        (car: CarInput) => car.isEmergency 
+            ? Car.createEmergency(car.start, car.end) 
+            : Car.create(car.start, car.end)
+    );
+
+    if (cars.length === 0) {
+        return res.json({
+            message: 'Unable to run without cars'
+        });
+    }
 
     const simulation = Simulation.create(road, cars);
-    console.log(simulation);
 
     try {
-        const response = await simulation.run({ withDelay: false });
+        const response = await simulation.run({ print: false, withDelay: false });
         connection.manager.save(simulation);
         res.json(response);
     } catch(e) {
-        console.error(e);
-        res.send('Error');
+        res.status(400).json({
+            code: 400,
+            error: e
+        });
     }
 
+    return;
 })
 
 const port = env.PORT;

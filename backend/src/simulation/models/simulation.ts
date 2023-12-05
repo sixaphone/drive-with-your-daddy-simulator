@@ -45,14 +45,14 @@ export class Simulation {
         return `sim-${AUTO_INCREMENT++}`
     }
 
-    async run({ withDelay = true } = {}) {
+    async run({ withDelay = true, print = true } = {}) {
         const self = this;
         const layouts = [];
 
         let cars = [...self.cars];
 
         while (cars.length) {
-            layouts.push(this.print());
+            layouts.push(this.print({ printToScreen: print }));
 
             let carQueue: Car[] = [];
             let toRemoveIds: Set<string> = new Set();
@@ -83,7 +83,7 @@ export class Simulation {
 
         return layouts;
     }
-    print() {
+    print({ printToScreen = true } = {}) {
         const layout = [];
 
         for (let x = 0; x < this.road.maxX; x++) {
@@ -95,12 +95,17 @@ export class Simulation {
                 toPrint += `${symbol} `;
                 row.push(symbol);
             }
-            console.log(toPrint);
+
+            if (printToScreen) {
+                console.log(toPrint);
+            }
             layout.push(row);
         }
 
-        console.log(NEW_LINE);
-        console.log(NEW_LINE);
+        if (printToScreen) {
+            console.log(NEW_LINE);
+            console.log(NEW_LINE);
+        }
 
         return layout;
     }
