@@ -13,4 +13,7 @@ export type Row = string[];
 
 export type Matrix = Row[];
 
-export type Steps = Matrix[];
+export type Steps = {
+  items: Matrix[];
+  index: number;
+}

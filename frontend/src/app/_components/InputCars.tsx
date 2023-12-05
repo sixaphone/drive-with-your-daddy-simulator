@@ -4,7 +4,7 @@ import InputCar from './InputCar';
 import { Car, Steps } from '../_types';
 
 interface InputCarsProps {
-  setSteps: (steps: any) => void;
+  setSteps: (steps: Steps) => void;
   steps: Steps;
 }
 
@@ -13,7 +13,7 @@ export default function InputCars({ steps, setSteps }: InputCarsProps) {
   const [noOfCars, setNoOfCars] = useState(0);
   const [error, setError] = useState('');
   const canEdit = useMemo(() => {
-    return steps.length === 0;
+    return steps.items.length === 0;
   }, [steps]);
   const enabled = useMemo(() => {
     return noOfCars
@@ -52,7 +52,11 @@ export default function InputCars({ steps, setSteps }: InputCarsProps) {
       }
     });
 
-    setSteps(await response.json());
+    const items = await response.json();
+    setSteps({
+      items,
+      index: 0
+    });
     setNoOfCars(0);
     setCars([]);
   }

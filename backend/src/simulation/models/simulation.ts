@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { AStar } from "@utils/a-star";
 import { delay } from "@utils/time";
 import { Road } from "./road";
@@ -22,6 +22,9 @@ export class Simulation {
 
     @OneToMany(() => ActionLog, (actionLog) => actionLog.simulation, { cascade: true })
     actionLogs?: ActionLog[];
+
+    @CreateDateColumn()
+    createdAt!: Date;
 
     aStar!: AStar;
 

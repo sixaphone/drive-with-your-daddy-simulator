@@ -85,15 +85,23 @@ export default function Simulation({ steps, setSteps }: SimulationProps) {
         </div>
     ), []);
 
+    console.log({steps});
     const renderStep = () => {
-        if (idx >= steps.length) {
-            setSteps([]);
+        if (steps.items.length <= steps.index) {
+            setSteps({
+                items: [],
+                index: 0
+            });
             return getDefault();
         }
 
-        const nextRow = steps[idx];
+        const nextRow = steps.items[steps.index];
 
-        setTimeout(() => { setIdx(idx + 1) }, 1000);
+        if (!nextRow) {
+            return getDefault();
+        }
+
+        setTimeout(() => { setSteps({ ...steps, index: steps.index + 1 }) }, 2000);
 
         return (
             <div className="flex flex-col flex-nowrap justify-center items-center gap-1">
@@ -107,9 +115,5 @@ export default function Simulation({ steps, setSteps }: SimulationProps) {
     }
 
 
-    if (steps.length === 0) {
-        return getDefault();
-    }
-
-    return renderStep();
+    return steps.items.length ? renderStep() : getDefault(); 
 }

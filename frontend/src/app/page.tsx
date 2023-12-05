@@ -5,7 +5,7 @@ import Simulation from './_components/Simulation';
 import { Steps } from './_types';
 
 export default function Home() {
-  const [steps, setSteps] = useState<Steps>([]);
+  const [steps, setSteps] = useState<Steps>({ items: [], index: 0 });
 
   return (
     <div className="flex flex-col gap-4">
