@@ -10,19 +10,22 @@ export class Car {
     id!: number;
 
     @Column()
-    simulationId: string;
+    simulationId!: string;
 
     @Column({ type: 'json' })
-    start: Coordinates;
+    start!: Coordinates;
 
     @Column({ type: 'json' })
-    end: Coordinates;
+    end!: Coordinates;
 
     @Column({ default: false })
-    isEmergencyCar: boolean;
+    isEmergencyCar!: boolean;
 
     @Column()
-    turnsInTraffic: number;
+    turnsInTraffic!: number;
+
+    @Column()
+    numberOfSteps!: number;
 
     @ManyToOne(() => Simulation, (simulation) => simulation.cars)
     simulation?: Simulation;
@@ -30,18 +33,27 @@ export class Car {
     @Column({ type: 'json', nullable: true })
     route?: { x: number, y: number }[];
 
-    _path: Tile[];
+    _path!: Tile[];
     _current?: Tile;
     _previous?: Tile;
     _next?: Tile;
 
-    constructor(start: Coordinates, end: Coordinates, isEmergencyCar?: boolean) {
-        this.start = start;
-        this.end = end;
-        this.isEmergencyCar = !!isEmergencyCar;
-        this._path = [];
-        this.turnsInTraffic = 0
-        this.simulationId = 'sim';
+    static create(start: Coordinates, end: Coordinates): Car {
+        const car = new Car();
+        car.start = start;
+        car.end = end;
+        car._path = [];
+        car.turnsInTraffic = 0
+        car.simulationId = 'sim';
+
+        return car;
+    }
+
+    static createEmergency(start: Coordinates, end: Coordinates): Car {
+        const car = Car.create(start, end);
+        car.isEmergencyCar = true;
+
+        return car;
     }
 
 
@@ -80,6 +92,7 @@ export class Car {
 
     addPath(path: Tile[]): void {
         this.route = path.map((tile) => ({ x: tile.x, y: tile.y }));
+        this.numberOfSteps = this.route.length;
         this.previous = undefined;
 
         const current: Tile | undefined = path.shift();
@@ -195,7 +208,7 @@ export class Car {
 
             return adjecentTile?.cars.length === 0;
         }
-        
+
         if (targetTile.isIntersection() && targetTile.trafficLight?.isRedLightFor(direction)) {
             return false;
         }
@@ -212,7 +225,7 @@ export class Car {
         if (targetTile.cars.length > 0) {
             return targetTile.cars.every((opposingCar: Car) => {
                 const otherCarNextTile = opposingCar.next;
-                
+
                 if (!otherCarNextTile) {
                     return true;;
                 }

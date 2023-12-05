@@ -15,46 +15,51 @@ export class Simulation {
     public id!: number
 
     @Column(() => Road)
-    road: Road;
+    road!: Road;
 
     @OneToMany(() => Car, (car) => car.simulation, { cascade: true })
-    cars: Car[];
-
-    aStar: AStar;
+    cars!: Car[];
 
     @OneToMany(() => ActionLog, (actionLog) => actionLog.simulation, { cascade: true })
     actionLogs?: ActionLog[];
 
-    constructor(road: Road, cars: Car[]) {
-        this.road = road;
-        this.aStar = new AStar(road.map);
-        this.actionLogs = [];
-        this.cars = cars.map((car: Car) => {
-            const aStar = this.aStar.findPath(car.start, car.end);
+    aStar!: AStar;
+
+    static create(road: Road, cars: Car[]): Simulation {
+        const simulation = new Simulation();
+        simulation.road = road;
+        simulation.aStar = new AStar(road?.map);
+        simulation.actionLogs = [];
+        simulation.cars = cars.map((car: Car) => {
+            const aStar = simulation.aStar.findPath(car.start, car.end);
             car.addPath(aStar.path);
-            car.addToSimulation(this);
+            car.addToSimulation(simulation);
 
             return car;
         });
+
+        return simulation;
     }
 
     getNextIdForCar(): string {
         return `sim-${AUTO_INCREMENT++}`
     }
 
-    async run() {
+    async run({ withDelay = true } = {}) {
         const self = this;
+        const layouts = [];
 
-        while (self.cars.length) {
+        let cars = [...self.cars];
 
-            this.print();
+        while (cars.length) {
+            layouts.push(this.print());
 
             let carQueue: Car[] = [];
             let toRemoveIds: Set<string> = new Set();
-            const length = self.cars.length;
+            const length = cars.length;
 
             for (let idx = 0; idx < length; idx++) {
-                const car = self.cars[idx];
+                const car = cars[idx];
                 if (car.next) {
                     if (car.canMove()) {
                         carQueue.push(car);
@@ -68,23 +73,35 @@ export class Simulation {
             }
 
             carQueue.forEach(car => car.move());
-            self.cars = self.cars.filter((car) => !toRemoveIds.has(car.simulationId));
+            cars = cars.filter((car) => !toRemoveIds.has(car.simulationId));
             this.road.updateLights();
 
-            await delay(1000);
+            if (withDelay) {
+                await delay(1000);
+            }
         }
+
+        return layouts;
     }
     print() {
+        const layout = [];
+
         for (let x = 0; x < this.road.maxX; x++) {
-            let row = '';
+            let toPrint = '';
+            let row = [];
             for (let y = 0; y < this.road.maxY; y++) {
                 const tile = this.road.map.get(`${x}${y}`);
-                row += (tile?.symbol ?? 'X') + ' ';
+                const symbol = (tile?.symbol ?? 'X');
+                toPrint += `${symbol} `;
+                row.push(symbol);
             }
-            console.log(row);
+            console.log(toPrint);
+            layout.push(row);
         }
 
         console.log(NEW_LINE);
         console.log(NEW_LINE);
+
+        return layout;
     }
 }

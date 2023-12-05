@@ -1,7 +1,6 @@
 import { DataSource } from 'typeorm';
 import env from '@env';
 import { Simulation } from '@simulation/models/simulation';
-import { TrafficLight } from '@simulation/models/traffic-light';
 import { Road } from '@simulation/models/road';
 import { Car } from '@simulation/models/car';
 import { ActionLog } from '@simulation/models/action-log';

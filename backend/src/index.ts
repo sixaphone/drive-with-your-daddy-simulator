@@ -12,16 +12,18 @@ app.get('/', async (_, res) => {
     const road = new Road(DEFAULT_LAYOUT, DEFAULT_LAYOUT.length, DEFAULT_LAYOUT[0].length);
     // two cars at intersection in opposing directions
     const cars = [
-        new Car({ x: 4, y: 2 }, { x: 8, y: 9 }),
-        new Car({ x: 4, y: 5 }, { x: 0, y: 0 }),
+        Car.create({ x: 4, y: 2 }, { x: 8, y: 9 }),
+        Car.create({ x: 4, y: 5 }, { x: 0, y: 0 }),
+
     ];
 
-    const simulation = new Simulation(road, cars);
-    try {
-        await simulation.run();
-        connection.manager.save(simulation);
-        // .then(() => console.log('DONE')).catch(console.error);
+    const simulation = Simulation.create(road, cars);
+    console.log(simulation);
 
+    try {
+        const response = await simulation.run({ withDelay: false });
+        connection.manager.save(simulation);
+        res.json(response);
     } catch(e) {
         console.error(e);
         res.send('Error');

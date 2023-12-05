@@ -50,5 +50,7 @@
         "./dist/constants",
       ]
     }
-  }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
 }

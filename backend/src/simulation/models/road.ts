@@ -1,11 +1,10 @@
 import { Direction, type Layout, type Neighbours, type TileSymbol } from "@types";
 import { TrafficLight } from "./traffic-light";
-import { Column, Entity } from "typeorm";
+import { Column } from "typeorm";
 import { Tile } from "./tile";
 import { TRAVERSALS } from "@constants";
 
 
-@Entity()
 export class Road {
     @Column({ type: "json" })
     layout: Layout;
