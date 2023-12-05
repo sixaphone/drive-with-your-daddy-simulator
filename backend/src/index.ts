@@ -5,6 +5,7 @@ import { Road } from "@simulation/models/road";
 import { DEFAULT_LAYOUT } from "@constants";
 import { Car } from "@simulation/models/car";
 import { Simulation } from "@simulation/models/simulation";
+import env from "@env";
 
 const app = express();
 
@@ -31,7 +32,7 @@ app.get('/', async (_, res) => {
 
 })
 
-const port = 3000;
+const port = env.PORT;
 
 app.listen(port, async () => {
     try {
