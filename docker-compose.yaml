@@ -1,40 +1,58 @@
 version: '3'
 
 services:
-  backend:
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   image: traffic-simulation-backend
+  #   container_name: traffic-simulation-backend
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   environment:
+  #     NODE_ENV: development
+  #     PORT: 8080
+  #     DATABASE_URL: mysql://traffic:traffic@mysql:3306/traffic
+  #   volumes:
+  #     - ./backend:/app
+  #   command: pnpm run dev
+  #   networks:
+  #     - traffic-simulation
+
+  frontend:
     build:
-      context: ./backend
+      context: ./frontend
       dockerfile: Dockerfile
-    image: traffic-simulation-backend
-    container_name: traffic-simulation-backend
+    image: traffic-simulation-frontend
+    container_name: traffic-simulation-frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       NODE_ENV: development
-      DATABASE_URL: mysql://traffic:traffic@mysql:3306/traffic
     volumes:
-      - ./backend:/app
-    command: pnpm run dev
+      - ./frontend:/app
+    command: pnpm dev 
     networks:
       - traffic-simulation
 
-  mysql:
-    image: mysql:latest
-    container_name: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: traffic
-      MYSQL_USER: traffic
-      MYSQL_PASSWORD: traffic
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./mysql-data:/var/lib/mysql
-    networks:
-      - traffic-simulation
+  # mysql:
+  #   image: mysql:latest
+  #   container_name: mysql
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: admin
+  #     MYSQL_DATABASE: traffic
+  #     MYSQL_USER: traffic
+  #     MYSQL_PASSWORD: traffic
+  #   ports:
+  #     - "3306:3306"
+  #   volumes:
+  #     - ./mysql-data:/var/lib/mysql
+  #   networks:
+  #     - traffic-simulation
 
 networks:
   traffic-simulation:
